@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - NekoGanz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .admin-container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], input[type="url"] {
+            width: 100%; padding: 10px;
+            border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;
+        }
+        button {
+            background-color: #39e09b; color: #fff; border: none;
+            padding: 10px 20px; font-size: 1rem; cursor: pointer;
+            border-radius: 5px; width: 100%; font-weight: bold;
+        }
+        button:hover { background-color: #2ebc82; }
+        
+        .list-container { margin-top: 30px; }
+        .list-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f1f1f1; padding: 15px; margin-bottom: 10px; border-radius: 5px;
+        }
+        .list-item-text { flex: 1; }
+        .list-item-text strong { display: block; font-size: 1.1rem; }
+        .list-item-text small { color: #666; }
+        .btn-hapus {
+            background-color: #ff4d4d; width: auto; padding: 8px 15px; font-size: 0.9rem;
+        }
+        .btn-hapus:hover { background-color: #cc0000; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <h2>Tambah Link Baru</h2>
+        <form id="addForm">
+            <div class="form-group">
+                <label>Judul Link</label>
+                <input type="text" id="name" placeholder="Contoh: Portofolio Web" required>
+            </div>
+            <div class="form-group">
+                <label>URL (Link)</label>
+                <input type="url" id="url" placeholder="https://..." required>
+            </div>
+            <div class="form-group">
+                <label>Deskripsi (Opsional)</label>
+                <input type="text" id="desc" placeholder="Keterangan singkat...">
+            </div>
+            <button type="submit">Tambah ke List</button>
+        </form>
+
+        <div class="list-container">
+            <h2>Daftar Link Saat Ini</h2>
+            <div id="adminList">Memuat...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadAdminList() {
+            const listDiv = document.getElementById('adminList');
+            try {
+                const response = await fetch('/api/projects');
+                const data = await response.json();
+                listDiv.innerHTML = '';
+                
+                if(data.length === 0) {
+                    listDiv.innerHTML = '<p>Data masih kosong.</p>';
+                }
+
+                data.forEach(proj => {
+                    listDiv.innerHTML += `
+                        <div class="list-item">
+                            <div class="list-item-text">
+                                <strong>${proj.name}</strong>
+                                <small>${proj.url}</small>
+                            </div>
+                            <button class="btn-hapus" onclick="deleteLink('${proj.id}')">Hapus</button>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                listDiv.innerHTML = '<p>Gagal memuat list.</p>';
+            }
+        }
+
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const url = document.getElementById('url').value;
+            const description = document.getElementById('desc').value;
+
+            await fetch('/api/projects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, url, description })
+            });
+
+            document.getElementById('addForm').reset();
+            loadAdminList(); // Refresh list
+        });
+
+        async function deleteLink(id) {
+            if(confirm('Yakin ingin menghapus link ini?')) {
+                await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+                loadAdminList();
+            }
+        }
+
+        loadAdminList();
+    </script>
+</body>
+</html>
+
