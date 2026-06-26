@@ -27,17 +27,29 @@ app.get('/api/projects', (req, res) => {
 // Menambah link baru
 app.post('/api/projects', (req, res) => {
     const { name, url, description } = req.body;
-    const apiKey = req.headers['x-api-key']; // Membaca key dari header
+    const apiKey = req.headers['x-api-key'];
 
-    // Ganti 'RAHASIA123' dengan password yang kamu mau
-    if (apiKey !== 'RAHASIA123') {
+    // Cek API Key
+    if (apiKey !== 'key') {
         return res.status(403).json({ error: 'Akses ditolak! API Key salah.' });
     }
     
-    data.push(newProject);
-    writeData(data);
-    res.json(newProject);
+    // --- INI BAGIAN YANG DIPERBAIKI ---
+    let data = readData(); // 1. Baca dulu data lama dari file data.json
+    
+    const newProject = {   // 2. Bungkus data baru yang dikirim dari HP
+        id: Date.now().toString(),
+        name: name,
+        url: url,
+        description: description || ""
+    };
+    
+    data.push(newProject); // 3. Masukkan data baru ke dalam antrean
+    writeData(data);       // 4. Simpan kembali ke file data.json
+    
+    res.json(newProject);  // 5. Berikan balasan sukses
 });
+
 
 // Menghapus link
 app.delete('/api/projects/:id', (req, res) => {
