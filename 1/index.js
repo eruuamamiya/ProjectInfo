@@ -184,7 +184,7 @@ const ITEMS = {
         { name: "Grilled Chicken 🍗", type: "consumable", stats: { hp: 40 }, rarity: "Common", value: 220, buyPrice: 350 },
         { name: "Golden Apple 🍎", type: "consumable", stats: { hp: 50 }, rarity: "Common", value: 300, buyPrice: 500 },
         { name: "Steak 🥩", type: "consumable", stats: { hp: 75 }, rarity: "Rare", value: 450, buyPrice: 750 },
-        { name: "Ancient Return Scroll 📜", type: "consumable", effect: "return_scroll", rarity: "Mythic", value: 100000000, buyPrice: 100000000 },
+        { name: "Ancient Return Scroll 📜", type: "consumable", effect: "return_scroll", rarity: "Mythic", value: 100000, buyPrice: 100000 },
 
         { name: "Iron Sword 🗡️", type: "weapon", stats: { atk: 15 }, rarity: "Rare", value: 1000, durability: 100 },
         { name: "Iron Helmet ⛑️", type: "helm", stats: { def: 10 }, rarity: "Rare", value: 800, durability: 100 },
